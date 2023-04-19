@@ -1,5 +1,6 @@
 import logging
 import random
+import time
 import requests
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
@@ -42,15 +43,32 @@ def echo(update: Update, context):
 
 # Define a sticker message handler
 def sticker(update: Update, context):
-    message = update.message
-    if message.sticker is not None:
+    if check_activity(update, context):
+        message = update.message
         # If the user sent a sticker, send a random sticker from the folder
         sticker_file = random.choice(STICKER_FILES)
         with open(STICKERS_PATH + sticker_file, "rb") as f:
             context.bot.send_sticker(chat_id=message.chat_id, sticker=f)
-    else:
-        # Otherwise, echo back the text message
-        context.bot.send_message(chat_id=message.chat_id, text=message.text)
+
+
+def check_activity(update: Update, context) -> bool:
+    # Get a list of all group chats that the bot is a member of
+    chat_list = context.bot.get_chat_members_count()
+
+    # Loop through each group chat and check its activity level
+    for chat in chat_list:
+        if chat["type"] == "group" or chat["type"] == "supergroup":
+            chat_id = chat["chat"]["id"]
+            messages = context.bot.get_chat_history(chat_id=chat_id, limit=1)
+            # Check if the last message was sent more than 5 minutes ago
+            last_activity_time = messages[0].date.timestamp()
+            current_time = time.time()
+            time_diff = current_time - last_activity_time
+
+            if time_diff > 300:
+                return True
+            else:
+                return False
 
 
 # Define a user activity handler
