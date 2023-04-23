@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta
 from telethon import TelegramClient, events, types
 import os
 import random
+import asyncio
 
 # Replace the values below with your own API key and phone number
 api_id = 27610862
@@ -24,32 +26,38 @@ async def main():
     # Log in to the client using your phone number
     await client.start(phone_number)
 
-    # You can print all the dialogs/conversations that you are part of:
-    # async for dialog in client.iter_dialogs():
-    #     print(dialog.name, "has ID", dialog.id)
-
     group = await client.get_entity(group_link)
 
-    # You can, of course, use markdown in your messages:
-    message = await client.send_message(
-        "me",
-        "This message has **bold**, `code`, __italics__ and "
-        "a [nice website](https://example.com)!",
-        link_preview=False,
-    )
+    # Define the time interval for checking group activity
+    interval = timedelta(minutes=1)
 
-    # You can reply to messages directly if you have a message object
-    await message.reply("Cool!")
+    # Define the time threshold for group inactivity
+    threshold = timedelta(minutes=5)
 
-    # Or send files, songs, documents, albums...
-    # Post a sticker to the group
-    sticker_file = random.choice(STICKER_FILES)
-    with open(STICKERS_PATH + sticker_file, "rb") as f:
-        await client.send_file(
-            group,
-            f,
-        )
+    # Define the last active time as the current time
+    last_active_time = datetime.now()
+
+    # Listen for updates in the group
+    @client.on(events.NewMessage(chats=group))
+    async def handler(event):
+        # Update the last active time to the current time
+        nonlocal last_active_time
+        last_active_time = datetime.now()
+
+    # Post a sticker to the group every minute if the group is inactive
+    while True:
+        # Check if the group has been inactive for the threshold time
+        if datetime.now() - last_active_time > threshold:
+            # Post a sticker to the group
+            sticker_file = random.choice(STICKER_FILES)
+            with open(STICKERS_PATH + sticker_file, "rb") as f:
+                await client.send_file(
+                    group,
+                    f,
+                )
+        # Wait for the interval time before checking again
+        await asyncio.sleep(interval.total_seconds())
 
 
 with client:
-    client.loop.run_forever(main())
+    client.loop.run_until_complete(main())
