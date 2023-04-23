@@ -3,16 +3,16 @@ import os
 import random
 
 # Replace the values below with your own API key and phone number
-api_id = 28031946
-api_hash = "245524b69451569529d778b6c21866f0"
-phone_number = "+23054892792"
+api_id = 27610862
+api_hash = "2b23114139c8a0deb14505ee681ebb0f"
+phone_number = "+2349151221593"
 # Define the path to the stickers folder
 STICKERS_PATH = "./stickers/"
 # Get the list of sticker file names
 STICKER_FILES = os.listdir(STICKERS_PATH)
 
 # Replace the value below with the name of the group you want to post to
-group_link = "https://t.me/takadahHQ"
+group_link = "https://t.me/efatah33metaverse"
 
 # Create a new client object and connect to the Telegram API
 client = TelegramClient("my_session", api_id, api_hash)
@@ -52,4 +52,4 @@ async def main():
 
 
 with client:
-    client.loop.run_until_complete(main())
+    client.loop.run_forever(main())
