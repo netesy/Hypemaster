@@ -12,9 +12,9 @@ accounts = [
         "phone_number": "+2349151221593",
     },
     {
-        "api_id": YOUR_API_ID,
-        "api_hash": "YOUR_API_HASH",
-        "phone_number": "+1234567890",
+        "api_id": 24930059,
+        "api_hash": "36e9a5fb105156589560cb55f8bf688d",
+        "phone_number": "+2348148202546",
     },
     # Add more accounts as needed
 ]
@@ -23,6 +23,15 @@ accounts = [
 STICKERS_PATH = "./stickers/"
 # Get the list of sticker file names
 STICKER_FILES = os.listdir(STICKERS_PATH)
+
+# Define the list of messages to post randomly
+MESSAGES = [
+    "Join EFA network now, grow your portfolio!",
+    "Buy Collact NOW or Regret Later!",
+    "Have you invest correctly?",
+    "Do Your Own Research, EFA Network to the MOON!!",
+    "Anything to share with the group?",
+]
 
 # Replace the value below with the name of the group you want to post to
 group_link = "https://t.me/efatah33metaverse"
@@ -58,17 +67,24 @@ async def main(account):
         nonlocal last_active_time
         last_active_time = datetime.now()
 
-    # Post a sticker to the group every minute if the group is inactive
+    # Post a sticker or a message to the group every minute if the group is inactive
     while True:
         # Check if the group has been inactive for the threshold time
         if datetime.now() - last_active_time > threshold:
-            # Post a sticker to the group
-            sticker_file = random.choice(STICKER_FILES)
-            with open(STICKERS_PATH + sticker_file, "rb") as f:
-                await client.send_file(
-                    group,
-                    f,
-                )
+            # Choose whether to post a sticker or a message randomly
+            post_sticker = random.choice([True, False])
+            if post_sticker:
+                # Post a sticker to the group
+                sticker_file = random.choice(STICKER_FILES)
+                with open(STICKERS_PATH + sticker_file, "rb") as f:
+                    await client.send_file(
+                        group,
+                        f,
+                    )
+            else:
+                # Post a message to the group
+                message = random.choice(MESSAGES)
+                await client.send_message(group, message)
         # Wait for the interval time before checking again
         await asyncio.sleep(interval.total_seconds())
 

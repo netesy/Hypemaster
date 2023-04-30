@@ -12,9 +12,9 @@ accounts = [
         "phone_number": "+2349151221593",
     },
     {
-        "api_id": YOUR_API_ID,
-        "api_hash": "YOUR_API_HASH",
-        "phone_number": "+1234567890",
+        "api_id": 24930059,
+        "api_hash": "36e9a5fb105156589560cb55f8bf688d",
+        "phone_number": "+2348148202546",
     },
     # Add more accounts as needed
 ]
