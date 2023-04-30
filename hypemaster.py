@@ -28,7 +28,7 @@ STICKER_FILES = os.listdir(STICKERS_PATH)
 MESSAGES = [
     "Join EFA network now, grow your portfolio!",
     "Buy Collact NOW or Regret Later!",
-    "Have you invest correctly?",
+    "Have you invest wisely?",
     "Do Your Own Research, EFA Network to the MOON!!",
     "Anything to share with the group?",
 ]
@@ -89,8 +89,10 @@ async def main(account):
         await asyncio.sleep(interval.total_seconds())
 
 
-# Create a list of tasks for each account
-tasks = [asyncio.create_task(main(account)) for account in accounts]
-
-# Run the tasks
-asyncio.gather(*tasks)
+if __name__ == "__main__":
+    # Get the default event loop
+    loop = asyncio.get_event_loop()
+    # Create a list of future objects for each task using `ensure_future`
+    tasks = [asyncio.ensure_future(main(account)) for account in accounts]
+    # Run the event loop until all tasks are complete
+    loop.run_until_complete(asyncio.gather(*tasks))
