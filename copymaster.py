@@ -44,11 +44,6 @@ async def main(account):
 
 
 if __name__ == "__main__":
-    # Get the default event loop
     loop = asyncio.get_event_loop()
-
-    # Create a list of future objects for each task using `ensure_future`
     tasks = [asyncio.ensure_future(main(account)) for account in accounts]
-
-    # Run the event loop until all tasks are complete
     loop.run_until_complete(asyncio.gather(*tasks))
