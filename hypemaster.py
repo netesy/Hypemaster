@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 from telethon import TelegramClient, events, types
-import os
-import random
-import asyncio
-from googletrans import Translator
+import os, random, asyncio
+from messages import MESSAGES
 
 # Define the list of phone numbers, API keys, and API hashes
 accounts = [
@@ -25,20 +23,8 @@ STICKERS_PATH = "./stickers/"
 # Get the list of sticker file names
 STICKER_FILES = os.listdir(STICKERS_PATH)
 
-# Define the languages to translate to
-LANGUAGES = ["fr", "es", "pt", "en"]
-
-# # Define the list of messages to post randomly
-MESSAGES = [
-    "Join EFA network now, grow your portfolio!",
-    "Buy Collact NOW or Regret Later!",
-    "Have you invest wisely?",
-    "Do Your Own Research, EFA Network to the MOON!!",
-    "Anything to share with the group?",
-]
-
-# Create a translator object
-translator = Translator()
+# randomly select one language
+language = random.choice(list(MESSAGES.keys()))
 
 
 # Replace the value below with the name of the group you want to post to
@@ -58,7 +44,7 @@ async def main(account):
     group = await client.get_entity(group_link)
 
     # Define the time interval for checking group activity
-    minutes = random.randint(1, 9)
+    minutes = random.randint(1, 3)
     interval = timedelta(minutes=minutes)
 
     # Define the time threshold for group inactivity
@@ -90,14 +76,9 @@ async def main(account):
                         f,
                     )
             else:
-                # Choose a random message from the English messages list
-                message = random.choice(MESSAGES)
-                # Choose a random language to translate to
-                lang = random.choice(LANGUAGES)
-                # Translate the message to the chosen language
-                translation = translator.translate(message, dest=lang)
-                # Post the translated message to the group
-                await client.send_message(group, translation.text)
+                # randomly select one message from the selected language and print it out
+                message = random.choice(MESSAGES[language])
+                await client.send_message(group, message)
         # Wait for the interval time before checking again
         await asyncio.sleep(interval.total_seconds())
 
