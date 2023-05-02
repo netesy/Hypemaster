@@ -3,6 +3,7 @@ from telethon import TelegramClient, events, types
 import os
 import random
 import asyncio
+from googletrans import Translator
 
 # Define the list of phone numbers, API keys, and API hashes
 accounts = [
@@ -24,14 +25,21 @@ STICKERS_PATH = "./stickers/"
 # Get the list of sticker file names
 STICKER_FILES = os.listdir(STICKERS_PATH)
 
-# Define the list of messages to post randomly
+# Define the languages to translate to
+LANGUAGES = ["fr", "es", "pt", "en"]
+
+# # Define the list of messages to post randomly
 MESSAGES = [
     "Join EFA network now, grow your portfolio!",
     "Buy Collact NOW or Regret Later!",
-    "Have you invest correctly?",
+    "Have you invest wisely?",
     "Do Your Own Research, EFA Network to the MOON!!",
     "Anything to share with the group?",
 ]
+
+# Create a translator object
+translator = Translator()
+
 
 # Replace the value below with the name of the group you want to post to
 group_link = "https://t.me/efatah33metaverse"
@@ -82,15 +90,22 @@ async def main(account):
                         f,
                     )
             else:
-                # Post a message to the group
+                # Choose a random message from the English messages list
                 message = random.choice(MESSAGES)
-                await client.send_message(group, message)
+                # Choose a random language to translate to
+                lang = random.choice(LANGUAGES)
+                # Translate the message to the chosen language
+                translation = translator.translate(message, dest=lang)
+                # Post the translated message to the group
+                await client.send_message(group, translation.text)
         # Wait for the interval time before checking again
         await asyncio.sleep(interval.total_seconds())
 
 
-# Create a list of tasks for each account
-tasks = [asyncio.create_task(main(account)) for account in accounts]
-
-# Run the tasks
-asyncio.gather(*tasks)
+if __name__ == "__main__":
+    # Get the default event loop
+    loop = asyncio.get_event_loop()
+    # Create a list of future objects for each task using `ensure_future`
+    tasks = [asyncio.ensure_future(main(account)) for account in accounts]
+    # Run the event loop until all tasks are complete
+    loop.run_until_complete(asyncio.gather(*tasks))

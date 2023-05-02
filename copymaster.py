@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta
-from telethon import TelegramClient, events, types
-import os
-import random
 import asyncio
+from telethon import TelegramClient
+from telethon.tl.functions.channels import InviteToChannelRequest
 
 # Define the list of phone numbers, API keys, and API hashes
 accounts = [
@@ -21,7 +19,7 @@ accounts = [
 
 # Replace the values below with the links to the source and target groups
 source_group_link = "https://t.me/efatah33metaverse"
-target_group_link = "https://t.me/target_group"
+target_group_link = "https://t.me/DRIPtoken_Chat"
 
 
 async def main(account):
@@ -45,8 +43,7 @@ async def main(account):
             print(f"Error copying member {member.id} ({member.username}): {e}")
 
 
-# Create a list of tasks for each account
-tasks = [asyncio.create_task(main(account)) for account in accounts]
-
-# Run the tasks
-asyncio.gather(*tasks)
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    tasks = [asyncio.ensure_future(main(account)) for account in accounts]
+    loop.run_until_complete(asyncio.gather(*tasks))
